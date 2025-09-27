@@ -16,16 +16,16 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-black/95 backdrop-blur-md sticky top-0 z-50 border-b border-cyan-500/30">
+    <nav className="bg-white/95 backdrop-blur-md sticky top-0 z-50 border-b border-cyan-500/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
             <div className="p-2 rounded-lg group-hover:scale-110 transition-transform duration-300">
               <img
-                src="/logo.png"
+                src="/new new logo.png"
                 alt="KreedaaX Logo"
-                className="h-12 w-12 object-contain drop-shadow-[0_0_15px_#0ff]"
+                className="h-12 w-30 object-contain drop-shadow-[0_0_15px_#0ff]"
               />
             </div>
             <span className="text-2xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent drop-shadow-[0_0_12px_#0ff]">
