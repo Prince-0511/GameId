@@ -13,7 +13,7 @@ const Footer = () => {
                 <Gamepad2 className="h-6 w-6 text-white" />
               </div>
               <span className="text-2xl font-bold text-gradient-gaming">
-                Gameonix
+                KreedaaX
               </span>
             </div>
             <p className="text-muted-foreground mb-6 max-w-md">
