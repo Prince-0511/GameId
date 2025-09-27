@@ -1,28 +1,22 @@
-import { useState, useEffect } from "react"; // 1. Import useEffect
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false); // 2. Add state to track scroll
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  // 3. Add useEffect to handle scroll events
   useEffect(() => {
     const handleScroll = () => {
-      // Set scrolled to true if user has scrolled more than 10px, otherwise false
       setScrolled(window.scrollY > 10);
     };
-
-    // Add event listener when component mounts
     window.addEventListener("scroll", handleScroll);
-
-    // Clean up event listener when component unmounts
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []); // Empty dependency array ensures this effect runs only once
+  }, []);
 
   const navLinks = [
     { path: "/", label: "Home" },
@@ -33,7 +27,6 @@ const Navbar = () => {
   ];
 
   return (
-    // 4. Add dynamic classes for background and transitions
     <nav
       className={`sticky top-0 z-50 border-b transition-all duration-300 ${
         scrolled
@@ -42,26 +35,26 @@ const Navbar = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* 5. Add dynamic classes for height */}
-        <div className={`flex justify-between items-center transition-all duration-300 ${
+        <div
+          className={`flex justify-between items-center transition-all duration-300 ${
             scrolled ? "h-16" : "h-24"
           }`}
         >
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group">
-            <div className="p-2 rounded-lg ">
+          <Link to="/" className="flex items-end space-x-2 group">
+            <div className="p-1 rounded-lg">
               <img
                 src="/new new logo.png"
                 alt="KreedaaX Logo"
-                className="h-12 w-30 object-contain "
+                className="h-16 md:h-20 object-contain mt-1"
               />
             </div>
-            <span className="text-2xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent drop-shadow-[0_0_12px_#0ff]">
+            {/* <span className="text-3xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent drop-shadow-[0_0_12px_#0ff]">
               KreedaaX
-            </span>
+            </span> */}
           </Link>
 
-          {/* Desktop Navigation (no changes needed here) */}
+          {/* Desktop Navigation */}
           <div className="hidden md:block">
             <ul className="ml-10 flex items-center space-x-10">
               {navLinks.map((link) => (
@@ -84,7 +77,7 @@ const Navbar = () => {
             </ul>
           </div>
 
-          {/* Mobile menu button (no changes needed here) */}
+          {/* Mobile menu button */}
           <div className="md:hidden">
             <button
               onClick={toggleMenu}
@@ -95,7 +88,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation (no changes needed here) */}
+        {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden">
             <ul className="px-4 pt-2 pb-4 space-y-3 bg-black/90 border border-cyan-500/30 rounded-lg mt-2">

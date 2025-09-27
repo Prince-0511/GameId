@@ -22,7 +22,7 @@ const Hero = () => {
         
           {/* LEFT SIDE: Text, Search, and CTA Button */}
           <div className="lg:w-1/2 w-full text-center lg:text-left">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-float leading-tight">
+            {/* <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-float leading-tight">
               <span className="text-gradient-gaming">CHAMPIONS OF THE</span>
               <br />
               <span className="text-gradient-gaming">DIGITAL ARENA</span>
@@ -30,7 +30,7 @@ const Hero = () => {
               <span className="text-lg md:text-xl lg:text-2xl text-muted-foreground font-normal mt-4 block">
                 YOUR HUB FOR GAMING ID MARKETPLACE
               </span>
-            </h1>
+            </h1> */}
 
             {/* Search Bar */}
             <div className="max-w-2xl mx-auto lg:mx-0 mb-8">
