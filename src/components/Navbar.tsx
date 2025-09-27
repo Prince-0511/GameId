@@ -58,9 +58,9 @@ const Navbar = () => {
                 }`}
               />
             </div>
-            <span className="text-2xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent drop-shadow-[0_0_12px_#0ff]">
+            {/* <span className="text-3xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent drop-shadow-[0_0_12px_#0ff]">
               KreedaaX
-            </span>
+            </span> */}
           </Link>
 
           {/* Desktop Navigation */}

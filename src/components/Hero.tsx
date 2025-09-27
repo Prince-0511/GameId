@@ -30,7 +30,7 @@ const Hero = () => {
               <span className="text-lg md:text-xl lg:text-2xl text-muted-foreground font-normal mt-4 block">
                 {/* YOUR HUB FOR GAMING ID MARKETPLACE */}
               </span>
-            </h1>
+            </h1> 
 
             {/* Search Bar */}
             <div className="max-w-2xl mx-auto lg:mx-0 mb-8">
