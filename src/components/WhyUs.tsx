@@ -33,7 +33,7 @@ const WhyUs = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gradient-gaming mb-4">
-            Why Choose Gameonix?
+            Why Choose KreedaaX?
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             We're more than just a marketplace – we're a trusted community where gamers connect safely
