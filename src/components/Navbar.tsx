@@ -20,12 +20,12 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group">
+          <Link to="/" className="flex items-center space-x-2 ">
             <div className="p-2 rounded-lg ">
               <img
                 src="/new new logo.png"
                 alt="KreedaaX Logo"
-                className="h-12 w-30 object-contain "
+                className="h-22 w-20 object-contain "
               />
             </div>
             <span className="text-2xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent drop-shadow-[0_0_12px_#0ff]">
