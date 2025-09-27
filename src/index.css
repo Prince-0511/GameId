@@ -1,0 +1,238 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Gameonix Design System - Gaming Marketplace Theme */
+@layer base {
+  :root {
+    /* Gaming Dark Theme Colors */
+    --background: 213 23% 5%; /* #0d1117 */
+    --foreground: 213 31% 91%; /* Light text */
+
+    --card: 213 23% 9%; /* #161b22 */
+    --card-foreground: 213 31% 91%;
+
+    --popover: 213 23% 9%;
+    --popover-foreground: 213 31% 91%;
+
+    /* Electric Blue Primary */
+    --primary: 213 89% 67%; /* #58a6ff */
+    --primary-foreground: 213 23% 5%;
+
+    /* Neon Green Secondary */
+    --secondary: 134 61% 52%; /* #2ea043 */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 213 23% 12%;
+    --muted-foreground: 213 13% 65%;
+
+    --accent: 213 89% 67%;
+    --accent-foreground: 213 23% 5%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 213 23% 15%;
+    --input: 213 23% 15%;
+    --ring: 213 89% 67%;
+
+    --radius: 0.75rem;
+
+    /* Gaming Specific Colors */
+    --gaming-dark: 213 23% 5%;
+    --gaming-card: 213 23% 9%;
+    --gaming-hover: 213 23% 12%;
+    --electric-blue: 213 89% 67%;
+    --neon-green: 134 61% 52%;
+    --glow-blue: 213 89% 67%;
+    --glow-green: 134 61% 52%;
+
+    /* Gradients */
+    --gradient-gaming: linear-gradient(135deg, hsl(var(--electric-blue)), hsl(var(--neon-green)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--gaming-dark)), hsl(var(--gaming-card)));
+    --gradient-card: linear-gradient(145deg, hsl(var(--gaming-card)), hsl(var(--gaming-hover)));
+
+    /* Shadows & Glows */
+    --shadow-gaming: 0 8px 32px hsla(var(--electric-blue) / 0.15);
+    --shadow-card: 0 4px 20px hsla(0 0% 0% / 0.25);
+    --glow-primary: 0 0 20px hsla(var(--electric-blue) / 0.4);
+    --glow-secondary: 0 0 20px hsla(var(--neon-green) / 0.4);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-poppins;
+  }
+}
+
+@layer components {
+  /* Gaming Button Variants */
+  .btn-gaming-primary {
+    @apply bg-primary text-primary-foreground hover:shadow-[var(--glow-primary)] hover:scale-105 transition-all duration-300 rounded-xl font-semibold;
+  }
+  
+  .btn-gaming-secondary {
+    @apply bg-secondary text-secondary-foreground hover:shadow-[var(--glow-secondary)] hover:scale-105 transition-all duration-300 rounded-xl font-semibold;
+  }
+
+  /* Gaming Card Styles with Animated Glow */
+  .gaming-card {
+    @apply relative overflow-hidden border border-border rounded-xl shadow-[var(--shadow-card)] transition-all duration-300;
+    background: var(--gradient-card);
+  }
+
+  .gaming-card::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+      from 0deg,
+      hsl(var(--electric-blue)),
+      hsl(var(--neon-green)),
+      hsl(var(--electric-blue))
+    );
+    animation: spin 8s linear infinite;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  .gaming-card::after {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    background: hsl(var(--gaming-card) / 0.95);
+    border-radius: inherit;
+    z-index: 1;
+  }
+
+  .gaming-card > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Glow Effects */
+  .glow-hover:hover {
+    @apply shadow-[var(--glow-primary)];
+  }
+  
+  .neon-glow {
+    @apply shadow-[var(--glow-secondary)];
+  }
+
+  /* Text Gradients */
+  .text-gradient-gaming {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+
+  /* Gaming Animations */
+  .game-card-hover {
+    @apply hover:transform hover:scale-105 hover:shadow-2xl transition-all duration-300 ease-out;
+  }
+}
+
+@layer utilities {
+  /* Custom animations */
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  
+  @keyframes glow {
+    from {
+      box-shadow: 0 0 20px hsla(var(--electric-blue) / 0.4);
+    }
+    to {
+      box-shadow: 0 0 30px hsla(var(--electric-blue) / 0.6), 0 0 40px hsla(var(--neon-green) / 0.2);
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 15px hsla(var(--neon-green) / 0.3);
+    }
+    50% {
+      box-shadow: 0 0 25px hsla(var(--neon-green) / 0.6);
+    }
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+}
