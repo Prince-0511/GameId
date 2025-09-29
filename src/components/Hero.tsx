@@ -1,13 +1,13 @@
 import { Search } from 'lucide-react';
 import heroImage from '@/assets/hero-gaming.jpg';
-// 1. Correct the import path to be more robust (using the '@/' alias)
+import ParticlesBackground from "@/components/Particles";
 import Controller3D from '@/components/3dmodel';
 
 const Hero = () => {
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0">
         <img
           src={heroImage}
           alt="Gaming marketplace hero background"
@@ -15,21 +15,22 @@ const Hero = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/90"></div>
       </div>
+
+      {/* 🔥 Particles ABOVE background but BELOW content */}
+      <div className="absolute inset-0 z-10 pointer-events-none">
+        <ParticlesBackground />
+      </div>
       
-      {/* 2. Restructure the content area for a two-column layout */}
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Content */}
+      <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-8">
         
           {/* LEFT SIDE: Text, Search, and CTA Button */}
           <div className="lg:w-1/2 w-full text-center lg:text-left">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-float leading-tight">
-              {/* <span className="text-gradient-gaming">CHAMPIONS OF THE</span> */}
               <br />
-              {/* <span className="text-gradient-gaming">DIGITAL ARENA</span> */}
               <br />
-              <span className="text-lg md:text-xl lg:text-2xl text-muted-foreground font-normal mt-4 block">
-                {/* YOUR HUB FOR GAMING ID MARKETPLACE */}
-              </span>
+              <span className="text-lg md:text-xl lg:text-2xl text-muted-foreground font-normal mt-4 block"></span>
             </h1>
 
             {/* Search Bar */}
@@ -57,11 +58,10 @@ const Hero = () => {
             </button>
           </div>
 
-          {/* 3. RIGHT SIDE: Add the 3D Model here */}
+          {/* RIGHT SIDE: 3D Model */}
           <div className="lg:w-1/2 w-full h-[300px] md:h-[500px]">
             <Controller3D />
           </div>
-          
         </div>
       </div>
 
