@@ -1,9 +1,25 @@
+import { useState, useEffect } from "react";
 import { Search } from 'lucide-react';
 import heroImage from '@/assets/hero-gaming.jpg';
 import ParticlesBackground from "@/components/Particles";
 import Controller3D from '@/components/3dmodel';
 
 const Hero = () => {
+  const [displayedText, setDisplayedText] = useState("");
+  const fullText = "Push harder, claim that victory";
+  const typingSpeed = 100; // ms per character
+
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      setDisplayedText(fullText.slice(0, i + 1));
+      i++;
+      if (i === fullText.length) clearInterval(interval);
+    }, typingSpeed);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
@@ -16,7 +32,7 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/90"></div>
       </div>
 
-      {/* 🔥 Particles ABOVE background but BELOW content */}
+      {/* Particles */}
       <div className="absolute inset-0 z-10 pointer-events-none">
         <ParticlesBackground />
       </div>
@@ -25,12 +41,20 @@ const Hero = () => {
       <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-8">
         
-          {/* LEFT SIDE: Text, Search, and CTA Button */}
+          {/* LEFT SIDE */}
           <div className="lg:w-1/2 w-full text-center lg:text-left">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-float leading-tight">
-              <br />
-              <br />
-              <span className="text-lg md:text-xl lg:text-2xl text-muted-foreground font-normal mt-4 block"></span>
+            {/* Typing Text */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 animate-float leading-tight">
+              <span
+                className="block mt-4 font-bold"
+                style={{
+                  color: "#1f98cfff",
+                  textShadow: "0 0 8px rgba(7, 0, 4, 0.7)"
+                }}
+              >
+                {displayedText}
+                <span className="animate-blink">|</span>
+              </span>
             </h1>
 
             {/* Search Bar */}
@@ -65,10 +89,25 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Floating Elements (unchanged) */}
+      {/* Floating Elements */}
       <div className="absolute top-20 left-10 w-20 h-20 bg-primary/20 rounded-full blur-xl animate-float"></div>
       <div className="absolute bottom-20 right-10 w-32 h-32 bg-secondary/20 rounded-full blur-xl animate-float" style={{ animationDelay: '2s' }}></div>
       <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-accent/20 rounded-full blur-xl animate-float" style={{ animationDelay: '4s' }}></div>
+
+      {/* Cursor Blink Animation */}
+      <style>
+        {`
+          .animate-blink {
+            display: inline-block;
+            width: 1ch;
+            animation: blink 0.7s step-start infinite;
+          }
+          @keyframes blink {
+            0%, 50%, 100% { opacity: 1; }
+            25%, 75% { opacity: 0; }
+          }
+        `}
+      </style>
     </section>
   );
 };

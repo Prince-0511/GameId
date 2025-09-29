@@ -62,7 +62,7 @@ const HowItWorksPage = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/20 via-secondary/20 to-background">
+      <section className="py-7 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/20 via-secondary/20 to-background">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-bold text-gradient-gaming mb-6">
             How It Works
@@ -74,7 +74,7 @@ const HowItWorksPage = () => {
       </section>
 
       {/* Steps Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-7 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid gap-8">
             {steps.map((step, index) => (
@@ -119,7 +119,7 @@ const HowItWorksPage = () => {
                 
                 {/* Arrow connector */}
                 {index < steps.length - 1 && (
-                  <div className="flex justify-center py-8">
+                  <div className="flex justify-center py-3">
                     <ArrowRight className="w-8 h-8 text-primary" />
                   </div>
                 )}
