@@ -10,11 +10,14 @@ const games = [
 ];
 
 const GameBanner = () => {
+  // Duplicate the array so the scroll looks continuous
+  const loopGames = [...games, ...games, ...games];
+
   return (
-    <section className="py-8 px-4 border-y border-primary/20">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-center space-x-8 overflow-x-auto">
-          {games.map((game, index) => (
+    <section className="py-8 px-4 border-y border-primary/20 bg-black">
+      <div className="max-w-7xl mx-auto overflow-hidden">
+        <div className="flex animate-scroll space-x-8">
+          {loopGames.map((game, index) => (
             <div
               key={index}
               className="flex-shrink-0 relative group cursor-pointer"

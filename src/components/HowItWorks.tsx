@@ -78,6 +78,3 @@ const HowItWorks = () => {
 
 export default HowItWorks;
 
-// jnvjfnvjdfnvkjngf
-
-// ddfdsagfgdfgfdg

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Search } from 'lucide-react';
-import heroImage from '@/assets/hero-gaming.jpg';
-import ParticlesBackground from "@/components/Particles";
-import Controller3D from '@/components/3dmodel';
+import { Search } from "lucide-react";
+import heroImage from "@/assets/hero-gaming.jpg";
+// import ParticlesBackground from "@/components/Particles";
+import Controller3D from "@/components/3dmodel";
 
 const Hero = () => {
   const [displayedText, setDisplayedText] = useState("");
@@ -16,7 +16,6 @@ const Hero = () => {
       i++;
       if (i === fullText.length) clearInterval(interval);
     }, typingSpeed);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -33,14 +32,13 @@ const Hero = () => {
       </div>
 
       {/* Particles */}
-      <div className="absolute inset-0 z-10 pointer-events-none">
+      {/* <div className="absolute inset-0 z-10 pointer-events-none">
         <ParticlesBackground />
-      </div>
-      
+      </div> */}
+
       {/* Content */}
       <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-8">
-        
           {/* LEFT SIDE */}
           <div className="lg:w-1/2 w-full text-center lg:text-left">
             {/* Typing Text */}
@@ -49,14 +47,13 @@ const Hero = () => {
                 className="block mt-4 font-bold"
                 style={{
                   color: "#1f98cfff",
-                  textShadow: "0 0 8px rgba(7, 0, 4, 0.7)"
+                  textShadow: "0 0 8px rgba(7, 0, 4, 0.7)",
                 }}
               >
                 {displayedText}
                 <span className="animate-blink">|</span>
               </span>
             </h1>
-
             {/* Search Bar */}
             <div className="max-w-2xl mx-auto lg:mx-0 mb-8">
               <div className="gaming-card p-2">
@@ -75,13 +72,14 @@ const Hero = () => {
                 </div>
               </div>
             </div>
-
             {/* CTA Button */}
-            <button className="btn-gaming-secondary px-12 py-4 text-xl font-bold animate-pulse-glow">
+            
+            <button 
+             onClick={() => (window.location.href = "http://localhost:5173/login")}
+            className="btn-gaming-secondary px-12 py-4 text-xl font-bold animate-pulse-glow">
               Get Started
             </button>
           </div>
-
           {/* RIGHT SIDE: 3D Model */}
           <div className="lg:w-1/2 w-full h-[300px] md:h-[500px]">
             <Controller3D />
@@ -91,8 +89,14 @@ const Hero = () => {
 
       {/* Floating Elements */}
       <div className="absolute top-20 left-10 w-20 h-20 bg-primary/20 rounded-full blur-xl animate-float"></div>
-      <div className="absolute bottom-20 right-10 w-32 h-32 bg-secondary/20 rounded-full blur-xl animate-float" style={{ animationDelay: '2s' }}></div>
-      <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-accent/20 rounded-full blur-xl animate-float" style={{ animationDelay: '4s' }}></div>
+      <div
+        className="absolute bottom-20 right-10 w-32 h-32 bg-secondary/20 rounded-full blur-xl animate-float"
+        style={{ animationDelay: "2s" }}
+      ></div>
+      <div
+        className="absolute top-1/2 left-1/4 w-16 h-16 bg-accent/20 rounded-full blur-xl animate-float"
+        style={{ animationDelay: "4s" }}
+      ></div>
 
       {/* Cursor Blink Animation */}
       <style>
