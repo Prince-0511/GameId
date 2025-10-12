@@ -10,21 +10,16 @@ export default function Register() {
   async function handleRegister(e) {
     e.preventDefault();
 
-    const { data, error } = await supabase.auth.signUp(
-      {
-        email,
-        password,
-      },
-      {
-        redirectTo: "http://localhost:8080/",
-      }
-    );
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
 
     if (error) {
-      alert("Registration failed 😢: " + error.message);
+      alert("❌ Registration failed: " + error.message);
     } else {
-      alert("Signup successful 🎉 Check your email for verification link.");
-      navigate("/"); // 👈 Redirect to homepage after signup
+      alert("✅ Signup successful! Please verify your email.");
+      navigate("/login"); // go to login after signup
     }
   }
 

@@ -10,57 +10,59 @@ export default function Login() {
   async function handleLogin(e) {
     e.preventDefault();
 
-    const { data, error } = await supabase.auth.signInWithPassword(
-      {
-        email,
-        password,
-      },
-      {
-        redirectTo: "http://localhost:8080/",
-      }
-    );
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
     if (error) {
       alert("Login failed 😢: " + error.message);
     } else {
       alert("Login successful 🎉");
-      navigate("/"); // 👈 Redirect to homepage in frontend
+      window.location.href = "http://localhost:8080/";  // Redirect to homepage
     }
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
-      <h1 className="text-3xl font-bold mb-4">Login</h1>
-      <form onSubmit={handleLogin} className="flex flex-col gap-3 w-80">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <form
+        onSubmit={handleLogin}
+        className="bg-white p-8 rounded-lg shadow-md w-80 flex flex-col gap-4"
+      >
+        <h1 className="text-2xl font-bold text-center mb-4">Login</h1>
+
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="p-2 rounded text-black"
+          className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
           required
         />
+
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="p-2 rounded text-black"
+          className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
           required
         />
+
         <button
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 p-2 rounded font-semibold"
+          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold p-2 rounded transition"
         >
           Login
         </button>
+
+        <p className="text-sm text-center text-gray-500 mt-2">
+          Don’t have an account?{" "}
+          <Link to="/register" className="text-blue-500 hover:underline">
+            Sign up
+          </Link>
+        </p>
       </form>
-      <p className="mt-4">
-        Don’t have an account?{" "}
-        <Link to="/register" className="text-blue-400 underline">
-          Sign up here
-        </Link>
-      </p>
     </div>
   );
 }

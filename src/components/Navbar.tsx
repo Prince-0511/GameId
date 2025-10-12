@@ -103,19 +103,21 @@ const Navbar = () => {
               ))}
 
               {/* 👇 Auth Buttons */}
+            
+              {/* 👇 Auth Buttons */}
               {!user ? (
                 <>
-                  <li>
-                    <Link
-                      to="http://localhost:5173/login"
-                      className="px-4 py-2 border border-cyan-400 rounded-lg text-cyan-400  hover:text-black transition"
+                 <li>
+                    <a
+                      href="http://localhost:5173/login"
+                      className="px-4 py-2 border border-cyan-400 rounded-lg text-cyan-400 transition"
                     >
                       Login
-                    </Link>
+                    </a>
                   </li>
                   <li>
                     <Link
-                      to="http://localhost:5173/register"
+                      to="/register"
                       className="px-4 py-2 bg-cyan-400 text-black rounded-lg hover:bg-cyan-300 transition"
                     >
                       Signup
@@ -123,15 +125,23 @@ const Navbar = () => {
                   </li>
                 </>
               ) : (
-                <li>
-                  <button
-                    onClick={handleLogout}
-                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-400 transition"
-                  >
-                    Logout
-                  </button>
-                </li>
+                <>
+                  <li>
+                    <span className="px-4 py-2 text-cyan-300 font-semibold">
+                      {user.email}
+                    </span>
+                  </li>
+                  <li>
+                    <button
+                      onClick={handleLogout}
+                      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-400 transition"
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </>
               )}
+
             </ul>
           </div>
 
@@ -166,6 +176,7 @@ const Navbar = () => {
                 </li>
               ))}
 
+         
               {!user ? (
                 <>
                   <li>
@@ -188,18 +199,26 @@ const Navbar = () => {
                   </li>
                 </>
               ) : (
-                <li>
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      toggleMenu();
-                    }}
-                    className="block w-full text-left text-lg font-medium text-red-400 hover:text-red-300"
-                  >
-                    Logout
-                  </button>
-                </li>
+                <>
+                  <li>
+                    <span className="block text-lg font-medium text-cyan-300">
+                      {user.email}
+                    </span>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        toggleMenu();
+                      }}
+                      className="block w-full text-left text-lg font-medium text-red-400 hover:text-red-300"
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </>
               )}
+
             </ul>
           </div>
         )}
