@@ -5,7 +5,6 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [ghostId, setGhostId] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,50 +18,25 @@ export function AuthProvider({ children }) {
         console.error("Error loading user:", error.message);
       }
 
-      if (user) {
-        setUser(user);
-        await fetchGhostId(user.id);
-      }
-
-      setLoading(false); // ✅ Always stop loading
+      setUser(user ?? null);
+      setLoading(false);
     }
 
     loadUser();
 
-    // ✅ Auth state listener (v2 syntax)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser(session.user);
-        fetchGhostId(session.user.id);
-      } else {
-        setUser(null);
-        setGhostId(null);
-      }
+      setUser(session?.user ?? null);
     });
 
     return () => {
-      subscription.unsubscribe(); // ✅ correct cleanup
+      subscription.unsubscribe();
     };
   }, []);
 
-  async function fetchGhostId(userId) {
-    const { data: profile, error } = await supabase
-      .from("users")
-      .select("ghost_id")
-      .eq("user_id", userId)
-      .single();
-
-    if (!error && profile) {
-      setGhostId(profile.ghost_id);
-    } else {
-      console.error("Failed to fetch ghost_id:", error?.message);
-    }
-  }
-
   return (
-    <AuthContext.Provider value={{ user, ghostId, loading }}>
+    <AuthContext.Provider value={{ user, loading }}>
       {children}
     </AuthContext.Provider>
   );

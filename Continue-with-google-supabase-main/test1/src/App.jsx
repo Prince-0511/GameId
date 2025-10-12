@@ -1,67 +1,47 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-import { supabase } from "./lib/supabase";
-import { useState, useEffect } from "react";
+import { createContext, useEffect, useState, useContext } from "react";
+import { supabase } from "../lib/supabase";
 
-function App() {
+const AuthContext = createContext();
+
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const session = supabase.auth.getSession().then(({ data }) => {
-      setUser(data.session?.user ?? null);
-    });
+    async function loadUser() {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
 
-    const { subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (error) {
+        console.error("Error loading user:", error.message);
+      }
+
+      setUser(user ?? null);
+      setLoading(false);
+    }
+
+    loadUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
 
-    return () => subscription?.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    alert("👋 Logged out successfully");
-  }
-
   return (
-    <Router>
-      <nav style={styles.nav}>
-        <Link to="/">Home</Link>
-        <Link to="/register">Register</Link>
-        <Link to="/login">Login</Link>
-        {user && <button onClick={handleLogout}>Logout</button>}
-      </nav>
-
-      <div style={{ padding: "10px", textAlign: "center" }}>
-        {user ? (
-          <h2>🎮Logged in as {user.email}</h2>
-        ) : (
-          <h2></h2>
-        )}
-      </div>
-
-      <Routes>
-        <Route path="/" element={<h1>Welcome To KreedaaX 👻</h1>} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-      </Routes>
-    </Router>
+    <AuthContext.Provider value={{ user, loading }}>
+      {children}
+    </AuthContext.Provider>
   );
 }
 
-const styles = {
-  nav: {
-    display: "flex",
-    gap: "10px",
-    padding: "10px",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-};
-
-export default App;
+export function useAuth() {
+  return useContext(AuthContext);
+}
