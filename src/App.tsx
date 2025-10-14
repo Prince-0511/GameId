@@ -10,6 +10,8 @@ import Games from "./pages/Games";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +26,8 @@ const App = () => (
           <Route path="/game/:id" element={<GameDetails />} />
           <Route path="/sell" element={<SellPage />} />
           <Route path="/games" element={<Games />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/how-it-works" element={<HowItWorksPage />} />
           <Route path="/contact" element={<Contact />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

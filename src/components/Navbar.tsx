@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import { supabase } from "../lib1/supabase";
+import { supabase } from "../lib/supabase";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -108,12 +108,12 @@ const Navbar = () => {
               {!user ? (
                 <>
                  <li>
-                    <a
-                      href="http://localhost:5173/login"
+                    <Link
+                      to="/login"
                       className="px-4 py-2 border border-cyan-400 rounded-lg text-cyan-400 transition"
                     >
                       Login
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <Link
