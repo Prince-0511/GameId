@@ -42,7 +42,7 @@ const HowItWorks = () => {
             >
               {/* Step Number */}
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <div className="w-12 h-8 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                <div className="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
                   {step.step}
                 </div>
               </div>

@@ -75,7 +75,7 @@ const Hero = () => {
             {/* CTA Button */}
             
             <button 
-             onClick={() => (window.location.href = "http://localhost:5173/login")}
+             onClick={() => (window.location.href = "/login")}
             className="btn-gaming-secondary px-12 py-4 text-xl font-bold animate-pulse-glow">
               Get Started
             </button>

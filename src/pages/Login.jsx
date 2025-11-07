@@ -1,29 +1,39 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
   async function handleLogin() {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
     if (error) return alert("❌ " + error.message);
 
-    alert(`✅ Welcome back, ${data.user.email}!`);
-    navigate("/");
+    alert(`✅ Welcome back, ${data.users.email}!`);
+
+    // 🧭 Redirect properly based on where user came from
+    if (location.state?.redirectToSell) {
+      navigate("/sell");
+    } else {
+      navigate("/");
+    }
   }
 
- async function handleGoogleLogin() {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-  });
+  async function handleGoogleLogin() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
 
-  if (error) console.error(error.message);
-  else console.log("Redirecting to Google login...");
-}
-
+    if (error) console.error(error.message);
+    else console.log("Redirecting to Google login...");
+  }
 
   return (
     <div style={styles.container}>
@@ -43,11 +53,15 @@ export default function Login() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+
       <button style={styles.button} onClick={handleLogin}>
         Login
       </button>
 
-      <button style={{...styles.button, backgroundColor: "#DB4437"}} onClick={handleGoogleLogin}>
+      <button
+        style={{ ...styles.button, backgroundColor: "#DB4437" }}
+        onClick={handleGoogleLogin}
+      >
         Continue with Google
       </button>
 

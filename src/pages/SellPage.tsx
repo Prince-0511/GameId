@@ -4,12 +4,80 @@ import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from "../lib/supabase";
+import Razorpay from "razorpay";
 
 const SellPage = () => {
+  const [imageFile, setImageFile] = useState<File | null>(null);
+const [imagePreview, setImagePreview] = useState<string | null>(null);
+const PLATFORM_FEE = 25;
+const [hasPaid, setHasPaid] = useState(false);
+
+const handlePayment = () => {
+  const options = {
+    key: "rzp_test_Rca0uFLytCCkBx",
+    amount: PLATFORM_FEE * 100,
+    currency: "INR",
+    name: "Platform Listing Fee",
+    description: "Pay to list your Game ID",
+    handler: async () => {
+      try {
+        // fetch current authenticated user from Supabase
+        const { data } = await supabase.auth.getUser();
+        const email = data?.user?.email;
+
+        if (!email) {
+          toast({
+            title: "Payment Error",
+            description: "Unable to determine your account email. Please sign in.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const { error: updateError } = await supabase
+          .from("users")
+          .update({ has_paid_fee: true })
+          .eq("email", email);
+
+        if (updateError) {
+          console.error(updateError);
+          toast({
+            title: "Update Failed",
+            description: "Could not update payment status. Please contact support.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        setHasPaid(true);
+
+        toast({
+          title: "Payment Successful 🎉",
+          description: "You can now submit your game listing."
+        });
+      } catch (err) {
+        console.error(err);
+        toast({
+          title: "Payment Error",
+          description: "An unexpected error occurred.",
+          variant: "destructive",
+        });
+      }
+    },
+    theme: { color: "#6366f1" },
+  };
+
+  const razor = new (window as any).Razorpay(options);
+  razor.open();
+};
+
+
+
   const { toast } = useToast();
   const [formData, setFormData] = useState({
+    sellerName: '',
     gameName: '',
-    accountRank: '',
     description: '',
     price: '',
     contactEmail: '',
@@ -24,37 +92,94 @@ const SellPage = () => {
       [name]: value
     }));
   };
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (file) {
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file)); // show preview
+  }
+};
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Basic validation
-    if (!formData.gameName || !formData.accountRank || !formData.description || !formData.contactEmail) {
+
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!formData.gameName || !formData.description || !formData.contactEmail) {
+    toast({
+      title: "Missing Information",
+      description: "Please fill in all required fields.",
+      variant: "destructive",
+    });
+    return;
+  }
+    let imageUrl = null;
+     if (imageFile) {
+    const fileName = `${Date.now()}-${imageFile.name}`;
+    const { data, error: uploadError } = await supabase.storage
+      .from('game_images')
+      .upload(fileName, imageFile);
+
+    if (uploadError) {
+      console.error(uploadError);
       toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
+        title: "Image Upload Failed",
+        description: "Please try uploading the image again.",
         variant: "destructive"
       });
       return;
     }
 
-    // Simulate form submission
-    toast({
-      title: "Success!",
-      description: "Your game ID has been submitted for listing. We'll review it and notify you once it's live.",
-    });
+    const { data: publicUrlData } = supabase.storage
+      .from('game_images')
+      .getPublicUrl(fileName);
 
-    // Reset form
-    setFormData({
-      gameName: '',
-      accountRank: '',
-      description: '',
-      price: '',
-      contactEmail: '',
-      contactWhatsApp: '',
-      contactDiscord: ''
+    imageUrl = publicUrlData.publicUrl;
+  }
+  // Insert into Supabase
+  const { data, error } = await supabase
+    .from('game_listings')
+    .insert([
+      {
+          seller_name: formData.sellerName,
+        game_name: formData.gameName,
+        description: formData.description,
+        price: formData.price,
+        contact_email: formData.contactEmail,
+        contact_whatsapp: formData.contactWhatsApp,
+        contact_discord: formData.contactDiscord,
+         image_url: imageUrl
+      },
+    ]);
+
+  if (error) {
+    console.error(error);
+    toast({
+      title: "Error",
+      description: "Something went wrong. Please try again.",
+      variant: "destructive",
     });
-  };
+    return;
+  }
+
+  toast({
+    title: "Success!",
+    description: "Your game ID has been submitted successfully!",
+  });
+
+  // Reset form
+  setFormData({
+    sellerName: '',
+    gameName: '',
+    description: '',
+    price: '',
+    contactEmail: '',
+    contactWhatsApp: '',
+    contactDiscord: '',
+  });
+  setImageFile(null);
+  setImagePreview(null);
+};
+
 
   const gameOptions = [
     'BGMI (Battlegrounds Mobile India)',
@@ -98,6 +223,21 @@ const SellPage = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Game Selection */}
             <div>
+              <label htmlFor="sellerName" className="block text-sm font-semibold text-foreground mb-2">
+                Seller Name *
+              </label>
+              <input
+                type="text"
+                id="sellerName"
+                name="sellerName"
+                value={formData.sellerName}
+                onChange={handleInputChange}
+                placeholder="Seller Name"
+                className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-foreground placeholder-muted-foreground"
+                required
+              />
+            </div>
+            <div>
               <label htmlFor="gameName" className="block text-sm font-semibold text-foreground mb-2">
                 Game Name *
               </label>
@@ -116,22 +256,7 @@ const SellPage = () => {
               </select>
             </div>
 
-            {/* Account Rank/Details */}
-            <div>
-              <label htmlFor="accountRank" className="block text-sm font-semibold text-foreground mb-2">
-                Account Rank/Details *
-              </label>
-              <input
-                type="text"
-                id="accountRank"
-                name="accountRank"
-                value={formData.accountRank}
-                onChange={handleInputChange}
-                placeholder="e.g., Conqueror, Immortal, Heroic, Level 85"
-                className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-foreground placeholder-muted-foreground"
-                required
-              />
-            </div>
+           
 
             {/* Description */}
             <div>
@@ -153,7 +278,7 @@ const SellPage = () => {
             {/* Price */}
             <div>
               <label htmlFor="price" className="block text-sm font-semibold text-foreground mb-2">
-                Asking Price (Optional)
+                Asking Price *
               </label>
               <input
                 type="text"
@@ -163,6 +288,7 @@ const SellPage = () => {
                 onChange={handleInputChange}
                 placeholder="e.g., ₹15,000 or Best Offer"
                 className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-foreground placeholder-muted-foreground"
+                required
               />
             </div>
 
@@ -189,7 +315,7 @@ const SellPage = () => {
 
                 <div>
                   <label htmlFor="contactWhatsApp" className="block text-sm font-semibold text-foreground mb-2">
-                    WhatsApp Number
+                    WhatsApp Number *
                   </label>
                   <input
                     type="tel"
@@ -199,6 +325,7 @@ const SellPage = () => {
                     onChange={handleInputChange}
                     placeholder="+91 9876543210"
                     className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-foreground placeholder-muted-foreground"
+                    required
                   />
                 </div>
               </div>
@@ -217,6 +344,46 @@ const SellPage = () => {
                   className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-foreground placeholder-muted-foreground"
                 />
               </div>
+              {/* Image Upload */}
+                  {/* Image Upload */}
+<div className="mt-6">
+  <label htmlFor="gameImage" className="block text-sm font-semibold text-foreground mb-2">
+    Upload Game Image
+  </label>
+
+  <div className="flex items-center gap-4">
+    <input
+      type="file"
+      id="gameImage"
+      accept="image/*"
+      onChange={handleImageChange}
+      className="text-sm text-muted-foreground"
+      required
+    />
+
+    {imagePreview && (
+      <img
+        src={imagePreview}
+        alt="Preview"
+        className="w-20 h-20 object-cover rounded-lg border border-border"
+      />
+    )}
+  </div>
+</div>
+
+{/* ✅ Pay Button Appears Right Below The Image Section */}
+{!hasPaid && (
+  <button
+    type="button"
+    onClick={handlePayment}
+    className="w-full btn-gaming-secondary py-3 text-lg font-bold mt-4"
+  >
+    Pay ₹{PLATFORM_FEE} to Continue
+  </button>
+)}
+
+
+
             </div>
 
             {/* Safety Notice */}
@@ -238,12 +405,14 @@ const SellPage = () => {
             {/* Submit Button */}
             <div className="pt-6">
               <button
-                type="submit"
-                className="w-full btn-gaming-secondary py-4 text-lg font-bold animate-pulse-glow"
-              >
-                <Upload className="w-5 h-5 mr-2 inline" />
-                Submit My Game ID
-              </button>
+  type="submit"
+  disabled={!hasPaid}
+  className="w-full btn-gaming-secondary py-4 text-lg font-bold animate-pulse-glow disabled:opacity-40 disabled:cursor-not-allowed"
+>
+  <Upload className="w-5 h-5 mr-2 inline" />
+  Submit My Game ID
+</button>
+
             </div>
           </form>
         </div>
