@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import heroImage from "@/assets/hero-gaming.jpg";
 // import ParticlesBackground from "@/components/Particles";
 import Controller3D from "@/components/3dmodel";
+// import Link from "next/link";
 
 const Hero = () => {
   const [displayedText, setDisplayedText] = useState("");
@@ -73,12 +74,12 @@ const Hero = () => {
               </div>
             </div>
             {/* CTA Button */}
-            
-            <button 
-             onClick={() => (window.location.href = "/login")}
-            className="btn-gaming-secondary px-12 py-4 text-xl font-bold animate-pulse-glow">
+            <a
+              href="/login"
+              className="btn-gaming-secondary px-12 py-4 text-xl font-bold animate-pulse-glow inline-block text-center"
+            >
               Get Started
-            </button>
+            </a>
           </div>
           {/* RIGHT SIDE: 3D Model */}
           <div className="lg:w-1/2 w-full h-[300px] md:h-[500px]">
