@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import "../Login.css"; // <-- IMPORTANT: We move CSS to external file
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -8,108 +9,73 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  async function handleLogin() {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  async function handleLogin(e) {
+    e.preventDefault();
 
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) return alert("❌ " + error.message);
 
-    alert(`✅ Welcome back, ${data.users.email}!`);
+    alert(`✅ Welcome back, ${data.user.email}!`);
 
-    // 🧭 Redirect properly based on where user came from
     if (location.state?.redirectToSell) {
       navigate("/sell");
-    } else {
-      navigate("/");
-    }
+    } else navigate("/");
   }
 
   async function handleGoogleLogin() {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-    });
-
-    if (error) console.error(error.message);
-    else console.log("Redirecting to Google login...");
+    const { error } = await supabase.auth.signInWithOAuth({ provider: "google" });
+    if (error) alert(error.message);
   }
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Login</h1>
+    <>
+      <video autoPlay muted loop id="bg-video">
+        <source src="/video.mp4" type="video/mp4" />
+      </video>
 
-      <input
-        style={styles.input}
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        style={styles.input}
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+      <div className="container">
+        <div className="login-card">
+          <h1>Login</h1>
 
-      <button style={styles.button} onClick={handleLogin}>
-        Login
-      </button>
+          <form onSubmit={handleLogin}>
+            <div className="input-group">
+              <label>Email</label>
+              <div className="input-field">
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <i className="fa-solid fa-envelope icon-right"></i>
+              </div>
+            </div>
 
-      <button
-        style={{ ...styles.button, backgroundColor: "#DB4437" }}
-        onClick={handleGoogleLogin}
-      >
-        Continue with Google
-      </button>
+            <div className="input-group">
+              <label>Password</label>
+              <div className="input-field">
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <i className="fa-solid fa-lock icon-right"></i>
+              </div>
+            </div>
 
-      <p style={styles.text}>
-        Don’t have an account? <Link to="/register">Sign Up</Link>
-      </p>
-      <p style={styles.text}>
-        <Link to="/forgot-password">Forgot Password?</Link>
-      </p>
-    </div>
+            <div className="options">
+              <div></div>
+              <Link to="/forgot-password">Forgot your Password?</Link>
+            </div>
+
+            <button className="login-button" type="submit">Login</button>
+          </form>
+
+          <div className="separator"><span>or</span></div>
+
+          {/* ✅ Only Google Button */}
+          <button className="google-button" onClick={handleGoogleLogin}>
+            <i className="fa-brands fa-google"></i> Continue with Google
+          </button>
+
+          <p style={{ textAlign: "center", marginTop: "15px" }}>
+            Don’t have an account? <Link to="/register">Sign Up</Link>
+          </p>
+        </div>
+
+       
+      </div>
+    </>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: "400px",
-    margin: "50px auto",
-    padding: "20px",
-    border: "1px solid #ddd",
-    borderRadius: "10px",
-    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-    textAlign: "center",
-    backgroundColor: "#fff",
-  },
-  title: {
-    marginBottom: "20px",
-  },
-  input: {
-    width: "90%",
-    padding: "10px",
-    margin: "10px 0",
-    borderRadius: "5px",
-    border: "1px solid #ccc",
-    fontSize: "16px",
-  },
-  button: {
-    width: "95%",
-    padding: "10px",
-    marginTop: "10px",
-    borderRadius: "5px",
-    border: "none",
-    backgroundColor: "#2196F3",
-    color: "#fff",
-    fontSize: "16px",
-    cursor: "pointer",
-  },
-  text: {
-    marginTop: "15px",
-    fontSize: "14px",
-  },
-};

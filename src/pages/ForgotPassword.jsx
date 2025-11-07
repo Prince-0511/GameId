@@ -1,12 +1,17 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase";
+import { Link } from "react-router-dom"; // Import Link
+import "../Login.css"; // <-- Import the shared CSS
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
 
-  async function handleReset() {
+  async function handleReset(e) {
+    e.preventDefault(); // <-- Add preventDefault for form submission
+
+    // Make sure to update this URL to your production URL when you deploy
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "http://localhost:5173/reset-password", // after reset link clicked
+      redirectTo: "http://localhost:5173/reset-password", // Page to redirect to after clicking link
     });
 
     if (error) {
@@ -17,70 +22,43 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Forgot Password</h1>
+    <>
+      <video autoPlay muted loop id="bg-video">
+        <source src="/video.mp4" type="video/mp4" />
+      </video>
 
-      <input
-        style={styles.input}
-        type="email"
-        placeholder="Enter your email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+      <div className="container">
+        <div className="login-card">
+          <h1>Forgot Password</h1>
+          <p style={{ textAlign: "center", marginBottom: "20px", color: "#666" }}>
+            Enter your email and we'll send you a reset link.
+          </p>
 
-      <button style={styles.button} onClick={handleReset}>
-        Send Reset Link
-      </button>
+          <form onSubmit={handleReset}>
+            <div className="input-group">
+              <label>Email</label>
+              <div className="input-field">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                />
+                <i className="fa-solid fa-envelope icon-right"></i>
+              </div>
+            </div>
 
-      <p style={styles.text}>
-        Remembered your password?{" "}
-        <a href="/login" style={styles.link}>
-          Back to Login
-        </a>
-      </p>
-    </div>
+            <button className="login-button" type="submit">
+              Send Reset Link
+            </button>
+          </form>
+
+          <p style={{ textAlign: "center", marginTop: "15px" }}>
+            Remembered your password? <Link to="/login">Back to Login</Link>
+          </p>
+        </div>
+      </div>
+    </>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: "400px",
-    margin: "50px auto",
-    padding: "20px",
-    border: "1px solid #ddd",
-    borderRadius: "10px",
-    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-    textAlign: "center",
-    backgroundColor: "#fff",
-  },
-  title: {
-    marginBottom: "20px",
-  },
-  input: {
-    width: "90%",
-    padding: "10px",
-    margin: "10px 0",
-    borderRadius: "5px",
-    border: "1px solid #ccc",
-    fontSize: "16px",
-  },
-  button: {
-    width: "95%",
-    padding: "10px",
-    marginTop: "10px",
-    borderRadius: "5px",
-    border: "none",
-    backgroundColor: "#2196F3",
-    color: "#fff",
-    fontSize: "16px",
-    cursor: "pointer",
-  },
-  text: {
-    marginTop: "15px",
-    fontSize: "14px",
-  },
-  link: {
-    color: "#2196F3",
-    textDecoration: "none",
-  },
-};
