@@ -58,9 +58,9 @@ const RecentListings = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent"></div>
                 <div className="absolute top-2 left-2">
-                  <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full font-semibold">
+                  {/* <span className="">
                     {listing.game}
-                  </span>
+                  </span> */}
                 </div>
                 <div className="absolute bottom-2 left-2">
                   <h3 className="text-sm font-bold text-white mb-1">
@@ -82,7 +82,7 @@ const RecentListings = () => {
                   </div>
                 </div>
                 <p className="text-muted-foreground text-sm line-clamp-2">
-                  {listing.description}
+                  {listing.game_name}
                 </p>
               </div>
 

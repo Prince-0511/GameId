@@ -7,14 +7,51 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  // ✨ Add a loading state to prevent double-clicks
+  const [loading, setLoading] = useState(false);
 
   async function handleRegister(e) {
-    e.preventDefault(); // <-- Add preventDefault for form submission
+    e.preventDefault(); 
+    setLoading(true); // ✨ Disable button
 
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) return alert("❌ " + error.message);
+    // 1. Create the authentication user
+    const { data: authData, error: authError } = await supabase.auth.signUp({ 
+      email, 
+      password 
+    });
 
+    if (authError) {
+      alert("❌ " + authError.message);
+      setLoading(false); // ✨ Re-enable button on error
+      return;
+    }
+
+    // ✨ --- THIS IS THE FIX --- ✨
+    // 2. Create the corresponding profile row in 'users' table
+    if (authData.user) {
+      const { error: profileError } = await supabase
+        .from('users') // 👈 Your 'users' table
+        .insert({ 
+          // Assuming your 'users' table 'id' column is a UUID linked to auth.users.id
+          id: authData.user.id, 
+          email: authData.user.email,
+          has_paid_fee: false // 👈 Set the default value
+        });
+
+      if (profileError) {
+        // If profile creation fails, it's a serious issue.
+        // You might want to delete the auth user or just alert them.
+        console.error("Error creating user profile:", profileError);
+        alert("❌ Registration succeeded but creating your profile failed. Please contact support.");
+        setLoading(false); // ✨ Re-enable button
+        return;
+      }
+    }
+    // ✨ --- END OF FIX --- ✨
+
+    // 3. Success
     alert("✅ Registration successful! Please check your email to verify.");
+    setLoading(false); // ✨ Done
     navigate("/login"); // Navigate to login after successful sign up
   }
 
@@ -55,8 +92,9 @@ export default function Register() {
               </div>
             </div>
 
-            <button className="login-button" type="submit">
-              Register
+            {/* ✨ Disable button while loading */}
+            <button className="login-button" type="submit" disabled={loading}>
+              {loading ? 'Registering...' : 'Register'}
             </button>
           </form>
 
