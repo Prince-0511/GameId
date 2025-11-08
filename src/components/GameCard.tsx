@@ -84,9 +84,9 @@ const GameCard = ({ id, title, game, description, price, seller, image, featured
         >
           View Details
         </Link>
-        <button className="w-full border border-primary text-primary hover:bg-primary hover:text-primary-foreground py-3 rounded-xl font-semibold transition-all duration-300">
+        {/* <button className="w-full border border-primary text-primary hover:bg-primary hover:text-primary-foreground py-3 rounded-xl font-semibold transition-all duration-300">
           Contact Seller
-        </button>
+        </button> */}
       </div>
     </div>
   );
