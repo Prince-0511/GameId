@@ -1,9 +1,28 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Gamepad2, Mail, MessageCircle, Twitter, Instagram, Youtube } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 
 const Footer = () => {
+  const [showPopup, setShowPopup] = useState(false);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  // Listen for login/logout
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user ?? null);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => listener.subscription.unsubscribe();
+  }, []);
   return (
-    <footer className="bg-card border-t border-border">
+    <>
+      <footer className="bg-card border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo & Description */}
@@ -63,9 +82,19 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/sell" className="text-muted-foreground hover:text-primary transition-colors duration-300">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (!user) {
+                      setShowPopup(true);
+                    } else {
+                      navigate("/sell");
+                    }
+                  }}
+                  className="text-muted-foreground hover:text-primary transition-colors duration-300"
+                >
                   Sell Your ID
-                </Link>
+                </button>
               </li>
               <li>
                 <Link to="/how-it-works" className="text-muted-foreground hover:text-primary transition-colors duration-300">
@@ -116,6 +145,38 @@ const Footer = () => {
         </div>
       </div>
     </footer>
+
+    {/* Login Popup */}
+    {showPopup && (
+      <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[9999]">
+        <div className="bg-gray-900 border border-cyan-400 rounded-lg p-6 text-center w-80 shadow-lg">
+          <h2 className="text-cyan-400 text-xl font-semibold mb-3">
+            Please Login
+          </h2>
+          <p className="text-gray-300 mb-5">
+            You need to log in before you can sell your ID.
+          </p>
+          <div className="flex justify-center gap-3">
+            <button
+              onClick={() => {
+                setShowPopup(false);
+                navigate("/login", { state: { redirectToSell: true } });
+              }}
+              className="px-4 py-2 bg-cyan-400 text-black rounded-lg hover:bg-cyan-300"
+            >
+              Login
+            </button>
+            <button
+              onClick={() => setShowPopup(false)}
+              className="px-4 py-2 border border-cyan-400 text-cyan-400 rounded-lg hover:bg-cyan-300 hover:text-black"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 };
 

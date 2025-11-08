@@ -1,8 +1,34 @@
 import { CheckCircle, Shield, Users, Zap, ArrowRight, Star } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { supabase } from '../lib/supabase';
 
 const HowItWorksPage = () => {
+  const navigate = useNavigate();
+  const [showPopup, setShowPopup] = useState(false);
+  const [user, setUser] = useState(null);
+
+  // Init session and listen for auth state changes
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user ?? null);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  // Prevent background scroll when popup active
+  useEffect(() => {
+    if (showPopup) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = 'auto';
+  }, [showPopup]);
+
   const steps = [
     {
       step: '01',
@@ -172,16 +198,50 @@ const HowItWorksPage = () => {
               Join thousands of gamers who trust our platform for secure account trading
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="btn-gaming-primary px-8 py-4 text-lg">
+                <a href="/games" className="btn-gaming-primary px-8 py-4 text-lg inline-block text-center">
                 Browse Games
-              </button>
-              <button className="btn-gaming-secondary px-8 py-4 text-lg">
+                </a>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (!user) setShowPopup(true);
+                  else navigate('/sell');
+                }}
+                className="btn-gaming-secondary px-8 py-4 text-lg"
+              >
                 Sell Your Account
               </button>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Login Popup for Sell action */}
+      {showPopup && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[9999]">
+          <div className="bg-gray-900 border border-cyan-400 rounded-lg p-6 text-center w-80 shadow-lg">
+            <h2 className="text-cyan-400 text-xl font-semibold mb-3">Please Login</h2>
+            <p className="text-gray-300 mb-5">You need to log in before you can sell your account.</p>
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => {
+                  setShowPopup(false);
+                  navigate('/login', { state: { redirectToSell: true } });
+                }}
+                className="px-4 py-2 bg-cyan-400 text-black rounded-lg hover:bg-cyan-300"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => setShowPopup(false)}
+                className="px-4 py-2 border border-cyan-400 text-cyan-400 rounded-lg hover:bg-cyan-300 hover:text-black"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
