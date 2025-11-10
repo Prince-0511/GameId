@@ -1,27 +1,50 @@
-import { useState, useEffect } from "react";
+// --- NEW ---: Import your authentication hook (adjust the path)
+import { useAuth } from "@/context/AuthContext"; 
+import { useState, useEffect, lazy, Suspense } from "react";
 import { Search } from "lucide-react";
 import heroImage from "@/assets/hero-gaming.jpg";
-// import ParticlesBackground from "@/components/Particles";
-import Controller3D from "@/components/3dmodel";
-// import Link from "next/link";
+const Controller3D = lazy(() => import("@/components/3dmodel"));
 
 const Hero = () => {
   const [displayedText, setDisplayedText] = useState("");
-  const fullText = "Push harder, claim that victory";
-  const typingSpeed = 100; // ms per character
+  const [textIndex, setTextIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const texts = ["Push harder, claim that victory"];
+  const typingSpeed = 20; // ms per character
+  const delayBetweenTexts = 2000; // 2 seconds pause between texts
 
+  // --- NEW ---: Get the user from your auth context
+  // If your auth check is different (e.g., 'isLoggedIn'), use that.
+  const { user } = useAuth(); 
+
+  // Typing Effect
   useEffect(() => {
-    let i = 0;
-    const interval = setInterval(() => {
-      setDisplayedText(fullText.slice(0, i + 1));
-      i++;
-      if (i === fullText.length) clearInterval(interval);
-    }, typingSpeed);
-    return () => clearInterval(interval);
-  }, []);
+    let timeout;
+    const currentText = texts[textIndex];
+    const currentLength = displayedText.length;
+
+    if (!isDeleting && currentLength === currentText.length) {
+      timeout = setTimeout(() => setIsDeleting(true), delayBetweenTexts);
+    } else if (isDeleting && currentLength === 0) {
+      setIsDeleting(false);
+      setTextIndex((textIndex + 1) % texts.length);
+    } else {
+      const speed = isDeleting ? typingSpeed / 2 : typingSpeed;
+      timeout = setTimeout(() => {
+        setDisplayedText(
+          currentText.slice(0, isDeleting ? currentLength - 1 : currentLength + 1)
+        );
+      }, speed);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [displayedText, isDeleting, textIndex, texts]);
+
 
   return (
-    <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+    <section
+      className="relative h-[90vh] flex items-center justify-center overflow-hidden"
+    >
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
         <img
@@ -31,11 +54,6 @@ const Hero = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/90"></div>
       </div>
-
-      {/* Particles */}
-      {/* <div className="absolute inset-0 z-10 pointer-events-none">
-        <ParticlesBackground />
-      </div> */}
 
       {/* Content */}
       <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8">
@@ -55,15 +73,19 @@ const Hero = () => {
                 <span className="animate-blink">|</span>
               </span>
             </h1>
+
             {/* Search Bar */}
-            <div className="max-w-2xl mx-auto lg:mx-0 mb-8">
+            <div
+              className="max-w-2xl mx-auto lg:mx-0 mb-8 relative z-30"
+              style={{ transform: "none" }}
+            >
               <div className="gaming-card p-2">
                 <div className="flex items-center">
                   <div className="flex-1 relative">
                     <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                     <input
                       type="text"
-                      placeholder="Search for game IDs (BGMI, Valorant...)"
+                      placeholder="Search for game IDs"
                       className="w-full pl-12 pr-4 py-4 bg-transparent text-foreground placeholder-muted-foreground focus:outline-none text-lg"
                     />
                   </div>
@@ -73,43 +95,41 @@ const Hero = () => {
                 </div>
               </div>
             </div>
-            {/* CTA Button */}
-            <a
-              href="/login"
-              className="btn-gaming-secondary px-12 py-4 text-xl font-bold animate-pulse-glow inline-block text-center"
-            >
-              Get Started
-            </a>
+
+            {/* --- MODIFIED ---: Conditionally render the button */}
+            {/* This checks if 'user' is null or undefined (i.e., not logged in) */}
+            {!user && (
+              <a
+                href="/login"
+                className="btn-gaming-secondary px-12 py-4 text-xl font-bold animate-pulse-glow inline-block text-center"
+              >
+                Get Started
+              </a>
+            )}
           </div>
+
           {/* RIGHT SIDE: 3D Model */}
-          <div className="lg:w-1/2 w-full h-[300px] md:h-[500px]">
-            <Controller3D />
+          <div className="lg:w-1/2 w-full h-[300px] lg:h-[400px] flex items-center justify-center">
+            
+            <Suspense
+              fallback={
+                <div className="w-full h-full bg-transparent"></div>
+              }
+            >
+              <Controller3D />
+            </Suspense>
           </div>
         </div>
       </div>
 
-      {/* Floating Elements */}
-      <div className="absolute top-20 left-10 w-20 h-20 bg-primary/20 rounded-full blur-xl animate-float"></div>
-      <div
-        className="absolute bottom-20 right-10 w-32 h-32 bg-secondary/20 rounded-full blur-xl animate-float"
-        style={{ animationDelay: "2s" }}
-      ></div>
-      <div
-        className="absolute top-1/2 left-1/4 w-16 h-16 bg-accent/20 rounded-full blur-xl animate-float"
-        style={{ animationDelay: "4s" }}
-      ></div>
-
-      {/* Cursor Blink Animation */}
       <style>
         {`
-          .animate-blink {
-            display: inline-block;
-            width: 1ch;
-            animation: blink 0.7s step-start infinite;
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
           }
-          @keyframes blink {
-            0%, 50%, 100% { opacity: 1; }
-            25%, 75% { opacity: 0; }
+          .animate-fadeIn {
+            animation: fadeIn 0.8s ease forwards;
           }
         `}
       </style>
