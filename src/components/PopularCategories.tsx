@@ -86,7 +86,7 @@ const CategoryList = ({ title, categories }) => (
       {categories.map((cat) => (
         <Link
           key={cat.id}
-          to={`/category/${cat.id}`}
+          to={``}
           className="flex items-center space-x-3 p-2 rounded-lg hover:bg-card/70 transition-colors group"
         >
           <div className="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20 rounded-md group-hover:from-primary/30 group-hover:to-secondary/30">

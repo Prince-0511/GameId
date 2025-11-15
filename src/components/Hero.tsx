@@ -1,56 +1,33 @@
-// --- NEW ---: Import your authentication hook (adjust the path)
-import { useAuth } from "@/context/AuthContext"; 
+import { useAuth } from "@/context/AuthContext";
 import { useState, useEffect, lazy, Suspense } from "react";
 import { Search } from "lucide-react";
 import heroImage from "@/assets/hero-gaming.jpg";
+
 const Controller3D = lazy(() => import("@/components/3dmodel"));
 
 const Hero = () => {
-  const [displayedText, setDisplayedText] = useState("");
-  const [textIndex, setTextIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const texts = ["Push harder, claim that victory"];
-  const typingSpeed = 20; // ms per character
-  const delayBetweenTexts = 2000; // 2 seconds pause between texts
+  const { user } = useAuth();
+  const [showModel, setShowModel] = useState(false);
 
-  // --- NEW ---: Get the user from your auth context
-  // If your auth check is different (e.g., 'isLoggedIn'), use that.
-  const { user } = useAuth(); 
-
-  // Typing Effect
+  // Defer 3D model load until visible
   useEffect(() => {
-    let timeout;
-    const currentText = texts[textIndex];
-    const currentLength = displayedText.length;
-
-    if (!isDeleting && currentLength === currentText.length) {
-      timeout = setTimeout(() => setIsDeleting(true), delayBetweenTexts);
-    } else if (isDeleting && currentLength === 0) {
-      setIsDeleting(false);
-      setTextIndex((textIndex + 1) % texts.length);
-    } else {
-      const speed = isDeleting ? typingSpeed / 2 : typingSpeed;
-      timeout = setTimeout(() => {
-        setDisplayedText(
-          currentText.slice(0, isDeleting ? currentLength - 1 : currentLength + 1)
-        );
-      }, speed);
-    }
-
-    return () => clearTimeout(timeout);
-  }, [displayedText, isDeleting, textIndex, texts]);
-
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setShowModel(true);
+    });
+    const target = document.querySelector("#hero-3d");
+    if (target) observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section
-      className="relative h-[90vh] flex items-center justify-center overflow-hidden"
-    >
-      {/* Background Image with Overlay */}
+    <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
+      {/* Background Image */}
       <div className="absolute inset-0">
         <img
           src={heroImage}
           alt="Gaming marketplace hero background"
           className="w-full h-full object-cover"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/90"></div>
       </div>
@@ -58,27 +35,25 @@ const Hero = () => {
       {/* Content */}
       <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-8">
+          
           {/* LEFT SIDE */}
           <div className="lg:w-1/2 w-full text-center lg:text-left">
-            {/* Typing Text */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 animate-float leading-tight">
+            {/* Typing Text (CSS-based) */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 leading-tight">
               <span
-                className="block mt-4 font-bold"
+                className="block mt-4 font-bold typing-text"
                 style={{
                   color: "#1f98cfff",
                   textShadow: "0 0 8px rgba(7, 0, 4, 0.7)",
                 }}
               >
-                {displayedText}
-                <span className="animate-blink">|</span>
+                Push harder, claim that victory
+                <span className="cursor">|</span>
               </span>
             </h1>
 
             {/* Search Bar */}
-            <div
-              className="max-w-2xl mx-auto lg:mx-0 mb-8 relative z-30"
-              style={{ transform: "none" }}
-            >
+            <div className="max-w-2xl mx-auto lg:mx-0 mb-8 relative z-30">
               <div className="gaming-card p-2">
                 <div className="flex items-center">
                   <div className="flex-1 relative">
@@ -96,12 +71,11 @@ const Hero = () => {
               </div>
             </div>
 
-            {/* --- MODIFIED ---: Conditionally render the button */}
-            {/* This checks if 'user' is null or undefined (i.e., not logged in) */}
+            {/* Conditionally render Get Started */}
             {!user && (
               <a
                 href="/login"
-                className="btn-gaming-secondary px-12 py-4 text-xl font-bold animate-pulse-glow inline-block text-center"
+                className="btn-gaming-secondary px-12 py-4 text-xl font-bold inline-block text-center"
               >
                 Get Started
               </a>
@@ -109,27 +83,34 @@ const Hero = () => {
           </div>
 
           {/* RIGHT SIDE: 3D Model */}
-          <div className="lg:w-1/2 w-full h-[300px] lg:h-[400px] flex items-center justify-center">
-            
-            <Suspense
-              fallback={
-                <div className="w-full h-full bg-transparent"></div>
-              }
-            >
-              <Controller3D />
-            </Suspense>
+          <div
+            id="hero-3d"
+            className="lg:w-1/2 w-full h-[300px] lg:h-[400px] flex items-center justify-center"
+          >
+            {showModel ? (
+              <Suspense fallback={<div className="w-full h-full bg-transparent"></div>}>
+                <Controller3D />
+              </Suspense>
+            ) : (
+              <img
+                src="/controller-preview.png"
+                alt="Controller preview"
+                className="w-full h-full object-contain"
+                loading="lazy"
+              />
+            )}
           </div>
         </div>
       </div>
 
+      {/* CSS Animations */}
       <style>
         {`
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+          .cursor {
+            animation: blink 1s infinite;
           }
-          .animate-fadeIn {
-            animation: fadeIn 0.8s ease forwards;
+          @keyframes blink {
+            50% { opacity: 0; }
           }
         `}
       </style>

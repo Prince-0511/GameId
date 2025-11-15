@@ -131,15 +131,18 @@ const Footer = () => {
               © 2024 Gameonix. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link to="/privacy" className="text-muted-foreground hover:text-primary text-sm transition-colors duration-300">
+              <div
+              className="text-muted-foreground hover:text-primary text-sm transition-colors duration-300">
                 Privacy Policy
-              </Link>
-              <Link to="/terms" className="text-muted-foreground hover:text-primary text-sm transition-colors duration-300">
+             </div>
+              <div 
+                className="text-muted-foreground hover:text-primary text-sm transition-colors duration-300">
                 Terms of Service
-              </Link>
-              <Link to="/safety" className="text-muted-foreground hover:text-primary text-sm transition-colors duration-300">
+             </div>
+             <div
+               className="text-muted-foreground hover:text-primary text-sm transition-colors duration-300">
                 Safety Guidelines
-              </Link>
+              </div>
             </div>
           </div>
         </div>
